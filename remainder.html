@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Plant Watering Reminder</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #e6f7e6;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      max-width: 350px;
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    input {
+      padding: 8px;
+      width: 60px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .info {
+      margin: 20px 0;
+    }
+
+    button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 12px 18px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🌱 Plant Watering Reminder</h1>
+
+    <label for="frequency">Water every (days):</label>
+    <input type="number" id="frequency" min="1" value="3">
+
+    <div class="info">
+      <p><strong>Last Watered:</strong> <span id="lastWatered">Not yet</span></p>
+      <p><strong>Next Watering:</strong> <span id="nextWatering">Not set</span></p>
+    </div>
+
+    <button id="waterBtn">💧 Mark as Watered</button>
+  </div>
+
+  <script>
+    const waterBtn = document.getElementById('waterBtn');
+    const lastWateredSpan = document.getElementById('lastWatered');
+    const nextWateringSpan = document.getElementById('nextWatering');
+    const frequencyInput = document.getElementById('frequency');
+
+    let lastWatered = localStorage.getItem('lastWatered');
+    let frequency = parseInt(localStorage.getItem('frequency')) || parseInt(frequencyInput.value);
+
+    frequencyInput.value = frequency;
+    updateUI();
+
+    frequencyInput.addEventListener('change', () => {
+      frequency = parseInt(frequencyInput.value);
+      localStorage.setItem('frequency', frequency);
+      updateUI();
+    });
+
+    waterBtn.addEventListener('click', () => {
+      const now = new Date();
+      lastWatered = now.toISOString();
+      localStorage.setItem('lastWatered', lastWatered);
+      updateUI();
+    });
+
+    function updateUI() {
+      if (lastWatered) {
+        const lastDate = new Date(lastWatered);
+        lastWateredSpan.textContent = lastDate.toDateString();
+
+        const nextDate = new Date(lastDate);
+        nextDate.setDate(nextDate.getDate() + frequency);
+        nextWateringSpan.textContent = nextDate.toDateString();
+      } else {
+        lastWateredSpan.textContent = "Not yet";
+        nextWateringSpan.textContent = "Not set";
+      }
+    }
+  </script>
+</body>
+</html>
